@@ -1,131 +1,91 @@
-// const url = 'https://pokeapi.co/api/v2/pokemon';
 
-// fetch(url)
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error('No se pudo obtener la lista de Pokémon');
-//         }
-//         return response.json();
-//     })
-//     .then(data => {
-//         data.results.forEach(pokemon => {
-//             const pokemonElement = document.createElement('div');
-//             pokemonElement.textContent = pokemon.name;
-//             document.querySelector('.pokemon-list').appendChild(pokemonElement);
-
-//             // Agregar evento de clic para mostrar detalles del Pokémon
-//             pokemonElement.addEventListener('click', function() {
-//                 const pokemonUrl = pokemon.url;
-//                 fetch(pokemonUrl)
-//                     .then(response => {
-//                         if (!response.ok) {
-//                             throw new Error('No se pudieron obtener los detalles del Pokémon');
-//                         }
-//                         return response.json();
-//                     })
-//                     .then(pokemonData => {
-//                         // Manejar los detalles del Pokémon aquí
-//                         console.log(pokemonData);
-//                     })
-//                     .catch(error => {
-//                         console.error('Error al obtener detalles del Pokémon:', error);
-//                     });
-//             });
-//         });
-//     })
-//     .catch(error => {
-//         console.error('Error:', error);
-//     });
-
-// const inputBarraBusqueda = document.getElementById('barra-busqueda');
-// const listaBusqueda = document.getElementById('lista-busqueda');
-
-// inputBarraBusqueda.addEventListener('input', function() {
-//     const searchTerm = inputBarraBusqueda.value.trim().toLowerCase();
-
-//     listaBusqueda.innerHTML = '';
-
-//     if (searchTerm.length === 0) {
-//         return;
-//     }
-
-//     fetch(`https://pokeapi.co/api/v2/pokemon/${searchTerm}`)
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error('No se encontraron resultados');
-//             }
-//             return response.json();
-//         })
-//         .then(pokemonData => {
-//             const pokemonElement = document.createElement('li');
-//             pokemonElement.textContent = pokemonData.name;
-//             listaBusqueda.appendChild(pokemonElement);
-
-//             pokemonElement.addEventListener('click', function() {
-//                 mostrarDetallesPokemon(pokemonData.url);
-//             });
-//         })
-//         .catch(error => {
-//             console.error('Error al realizar la búsqueda:', error);
-//         });
-// });
-
-// function mostrarDetallesPokemon(pokemonUrl) {
-//     fetch(pokemonUrl)
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error('No se pudieron obtener los detalles del Pokémon');
-//             }
-//             return response.json();
-//         })
-//         .then(pokemonData => {
-//             // Obtener el nombre del Pokémon de la propiedad "species"
-//             const pokemonName = pokemonData.species.name;
-//             console.log('Nombre del Pokémon:', pokemonName);
-    
-//             // Aquí puedes agregar el código para mostrar los detalles del Pokémon en la interfaz de usuario
-//         })
-//         .catch(error => {
-//             console.error('Error al obtener detalles del Pokémon:', error);
-//         });
-// }
-// ui.js
 // console.log(window.location.href);
 // Importar las funciones del servicio
+// Importar las funciones del servicio
 import { getPokemonList, getPokemonDetails } from '../services/pokedex.js';
+import { avanzarPagina, retrocederPagina } from '../ui/paginado.js';
 
-/// En tu archivo index.js
+let currentPage = 1;
+const limit = 10;
 
-// Función para mostrar la lista de Pokémon
-async function showPokemonList() {
-    const pokemonList = await getPokemonList();
+async function showPokemonList(offset) {
+    console.log("Mostrando lista de Pokémon...");
+    const pokemonList = await getPokemonList(offset, limit);
     const pokemonContainer = document.getElementById('pokemones');
-    
-    // Limpiar el contenido del contenedor
+
     pokemonContainer.innerHTML = '';
 
-    // Iterar sobre la lista de Pokémon y agregarlos al contenedor
-    pokemonList.forEach(pokemon => {
+    pokemonList.forEach(async pokemon => {
         const pokemonElement = document.createElement('div');
         pokemonElement.textContent = pokemon.name;
+        pokemonElement.addEventListener('click', async () => {
+            const pokemonDetails = await getPokemonDetails(pokemon.name);
+            showPokemonDetails(pokemonDetails);
+        });
         pokemonContainer.appendChild(pokemonElement);
     });
+
+    // Actualizar el número de página actual en la interfaz
+    document.getElementById('pagina-actual').textContent = `Página ${currentPage}`;
 }
 
-// Llamar a la función para mostrar la lista de Pokémon cuando se cargue la página
+async function showPokemonDetails(pokemonDetails) {
+    const detailContainer = document.getElementById('detalle');
+    detailContainer.innerHTML = ''; // Limpiar los detalles anteriores
+
+    // Crear elementos HTML para mostrar los detalles del Pokémon
+    const detailImage = document.createElement('img');
+    detailImage.src = pokemonDetails.sprites.front_default; // Acceder a la propiedad 'sprites' y 'front_default'
+    detailImage.alt = pokemonDetails.name;
+    detailContainer.appendChild(detailImage);
+
+    // Mostrar otros detalles como nombre, experiencia, peso, altura, etc.
+    const detailName = document.createElement('div');
+    detailName.textContent = `Nombre: ${pokemonDetails.name}`;
+    detailContainer.appendChild(detailName);
+
+    const detailExperience = document.createElement('div');
+    detailExperience.textContent = `Experiencia: ${pokemonDetails.base_experience}`;
+    detailContainer.appendChild(detailExperience);
+
+    const detailWeight = document.createElement('div');
+    detailWeight.textContent = `Peso: ${pokemonDetails.weight} kg`;
+    detailContainer.appendChild(detailWeight);
+
+    const detailHeight = document.createElement('div');
+    detailHeight.textContent = `Altura: ${pokemonDetails.height / 10} m`; // Convertir la altura a metros
+    detailContainer.appendChild(detailHeight);
+}
+let timeout;
+
+document.getElementById('boton-busqueda').addEventListener('click', async () => {
+    clearTimeout(timeout); // Limpiar el temporizador si se hace clic en el botón de búsqueda
+    const searchValue = document.getElementById('barra-busqueda').value.toLowerCase();
+
+    if (searchValue) {
+        const pokemon = await getPokemonDetails(searchValue);
+        if (pokemon) {
+            showPokemonDetails(pokemon);
+            } else {
+                alert('¡Pokémon no encontrado!');
+            }
+        } else {
+            // Limpiar los detalles del Pokémon si el campo de búsqueda está vacío
+            document.getElementById('detalle').innerHTML = '';
+        }
+    }, 500); // Espera 500 ms después de que el usuario haya dejado de escribir
+
+
 document.addEventListener('DOMContentLoaded', () => {
-    showPokemonList();
+    showPokemonList(0);
 });
 
+document.getElementById('btnNext').addEventListener('click', async () => {
+    avanzarPagina(() => showPokemonList(currentPage * limit));
+    currentPage++;
+});
 
-// Función para mostrar los detalles de un Pokémon
-async function showPokemonDetails(pokemonName) {
-    const pokemonDetails = await getPokemonDetails(pokemonName);
-    // Lógica para mostrar los detalles de un Pokémon en la interfaz
-    console.log(pokemonDetails);
-}
-
-// Llamar a la función para mostrar la lista de Pokémon cuando se cargue la página
-document.addEventListener('DOMContentLoaded', () => {
-    showPokemonList();
+document.getElementById('btnPrev').addEventListener('click', async () => {
+    currentPage--;
+    retrocederPagina(() => showPokemonList((currentPage - 1) * limit));
 });
