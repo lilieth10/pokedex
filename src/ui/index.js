@@ -1,7 +1,3 @@
-
-// console.log(window.location.href);
-// Importar las funciones del servicio
-// Importar las funciones del servicio
 import { getPokemonList, getPokemonDetails } from '../services/pokedex.js';
 import { avanzarPagina, retrocederPagina } from '../ui/paginado.js';
 
@@ -25,21 +21,19 @@ async function showPokemonList(offset) {
         pokemonContainer.appendChild(pokemonElement);
     });
 
-    // Actualizar el número de página actual en la interfaz
     document.getElementById('pagina-actual').textContent = `Página ${currentPage}`;
 }
 
 async function showPokemonDetails(pokemonDetails) {
     const detailContainer = document.getElementById('detalle');
-    detailContainer.innerHTML = ''; // Limpiar los detalles anteriores
+    detailContainer.innerHTML = ''; 
 
-    // Crear elementos HTML para mostrar los detalles del Pokémon
+    
     const detailImage = document.createElement('img');
-    detailImage.src = pokemonDetails.sprites.front_default; // Acceder a la propiedad 'sprites' y 'front_default'
+    detailImage.src = pokemonDetails.sprites.front_default; 
     detailImage.alt = pokemonDetails.name;
     detailContainer.appendChild(detailImage);
 
-    // Mostrar otros detalles como nombre, experiencia, peso, altura, etc.
     const detailName = document.createElement('div');
     detailName.textContent = `Nombre: ${pokemonDetails.name}`;
     detailContainer.appendChild(detailName);
@@ -53,13 +47,13 @@ async function showPokemonDetails(pokemonDetails) {
     detailContainer.appendChild(detailWeight);
 
     const detailHeight = document.createElement('div');
-    detailHeight.textContent = `Altura: ${pokemonDetails.height / 10} m`; // Convertir la altura a metros
+    detailHeight.textContent = `Altura: ${pokemonDetails.height / 10} m`; 
     detailContainer.appendChild(detailHeight);
 }
 let timeout;
 
 document.getElementById('boton-busqueda').addEventListener('click', async () => {
-    clearTimeout(timeout); // Limpiar el temporizador si se hace clic en el botón de búsqueda
+    clearTimeout(timeout);  
     const searchValue = document.getElementById('barra-busqueda').value.toLowerCase();
 
     if (searchValue) {
@@ -70,12 +64,10 @@ document.getElementById('boton-busqueda').addEventListener('click', async () => 
                 alert('¡Pokémon no encontrado!');
             }
         } else {
-            // Limpiar los detalles del Pokémon si el campo de búsqueda está vacío
+            
             document.getElementById('detalle').innerHTML = '';
         }
-    }, 500); // Espera 500 ms después de que el usuario haya dejado de escribir
-
-
+    }, 500); 
 document.addEventListener('DOMContentLoaded', () => {
     showPokemonList(0);
 });

@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "cypress-run": "cypress run",
+    "cypress-dev":"cypress open",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,6 +15,7 @@
     "jquery": "^3.7.1"
   },
   "devDependencies": {
-    "@types/jquery": "^3.5.29"
+    "@types/jquery": "^3.5.29",
+    "cypress": "^13.7.1"
   }
 }
