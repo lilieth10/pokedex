@@ -11,7 +11,7 @@ jest.mock('../services/pokedex.js', () => ({
   getPokemonDetails: jest.fn(),
 }));
 
-describe('showPokemonList function', () => {
+describe('Función mostrar lista de Pokémon', () => {
   beforeEach(() => {
     document.body.innerHTML = `
       <div id="pokemones"></div>
@@ -19,7 +19,7 @@ describe('showPokemonList function', () => {
     `;
   });
 
-  test('should fetch Pokemon list and display it in the container', async () => {
+  test('debería obtener la lista de Pokémon y mostrarla en el contenedor', async () => {
     const mockPokemonList = [{ name: 'Pikachu' }, { name: 'Bulbasaur' }];
     getPokemonList.mockResolvedValue(mockPokemonList);
 
@@ -30,8 +30,8 @@ describe('showPokemonList function', () => {
   });
 });
 
-describe('showPokemonDetails function', () => {
-  test('should display Pokemon details in the detail container', () => {
+describe('Función mostrar detalles de Pokémon', () => {
+  test('debería mostrar los detalles de Pokémon en el contenedor de detalle', () => {
     const mockPokemonDetails = {
       name: 'Pikachu',
       sprites: { front_default: 'pikachu.png' },
@@ -47,7 +47,8 @@ describe('showPokemonDetails function', () => {
     expect(document.getElementById('detalle').children.length).toBe(5);
   });
 });
-describe('search button click event', () => {
+
+describe('Evento de clic en el botón de búsqueda', () => {
   beforeEach(() => {
     document.body.innerHTML = `
       <input id="barra-busqueda" type="text" value="pikachu">
@@ -56,7 +57,7 @@ describe('search button click event', () => {
     `;
   });
 
-  test('should fetch and display Pokemon details when a valid Pokemon name is entered', async () => {
+  test('debería obtener y mostrar los detalles de Pokémon cuando se ingresa un nombre de Pokémon válido', async () => {
     const mockPokemon = {
       name: 'Pikachu',
       sprites: { front_default: 'pikachu.png' },
