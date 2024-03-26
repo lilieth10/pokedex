@@ -13,7 +13,7 @@ export function mostrarCartelActualizacion() {
   
       $item.classList.add('list-group-item', 'list-group-item-action');
       $item.textContent = nombrePokemon;
-      $item.dataset.base = nombrePokemon; //data-base='bulbasaur'
+      $item.dataset.base = nombrePokemon; 
   
       $item.addEventListener('click', () => {
         const $itemActivo = document.querySelector('.list-group-item.active');

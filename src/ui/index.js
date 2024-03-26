@@ -1,7 +1,4 @@
-
-// console.log(window.location.href);
-// Importar las funciones del servicio
-// Importar las funciones del servicio
+// index.js
 import { getPokemonList, getPokemonDetails } from '../services/pokedex.js';
 import { avanzarPagina, retrocederPagina } from '../ui/paginado.js';
 
@@ -9,13 +6,12 @@ let currentPage = 1;
 const limit = 10;
 
 async function showPokemonList(offset) {
-    console.log("Mostrando lista de Pokémon...");
     const pokemonList = await getPokemonList(offset, limit);
     const pokemonContainer = document.getElementById('pokemones');
-
+    
     pokemonContainer.innerHTML = '';
 
-    pokemonList.forEach(async pokemon => {
+    pokemonList.forEach(pokemon => {
         const pokemonElement = document.createElement('div');
         pokemonElement.textContent = pokemon.name;
         pokemonElement.addEventListener('click', async () => {
@@ -25,21 +21,18 @@ async function showPokemonList(offset) {
         pokemonContainer.appendChild(pokemonElement);
     });
 
-    // Actualizar el número de página actual en la interfaz
     document.getElementById('pagina-actual').textContent = `Página ${currentPage}`;
 }
 
 async function showPokemonDetails(pokemonDetails) {
     const detailContainer = document.getElementById('detalle');
-    detailContainer.innerHTML = ''; // Limpiar los detalles anteriores
+    detailContainer.innerHTML = ''; 
 
-    // Crear elementos HTML para mostrar los detalles del Pokémon
     const detailImage = document.createElement('img');
-    detailImage.src = pokemonDetails.sprites.front_default; // Acceder a la propiedad 'sprites' y 'front_default'
+    detailImage.src = pokemonDetails.sprites.front_default; 
     detailImage.alt = pokemonDetails.name;
     detailContainer.appendChild(detailImage);
 
-    // Mostrar otros detalles como nombre, experiencia, peso, altura, etc.
     const detailName = document.createElement('div');
     detailName.textContent = `Nombre: ${pokemonDetails.name}`;
     detailContainer.appendChild(detailName);
@@ -53,39 +46,48 @@ async function showPokemonDetails(pokemonDetails) {
     detailContainer.appendChild(detailWeight);
 
     const detailHeight = document.createElement('div');
-    detailHeight.textContent = `Altura: ${pokemonDetails.height / 10} m`; // Convertir la altura a metros
+    detailHeight.textContent = `Altura: ${pokemonDetails.height / 10} m`; 
     detailContainer.appendChild(detailHeight);
 }
 let timeout;
-
-document.getElementById('boton-busqueda').addEventListener('click', async () => {
-    clearTimeout(timeout); // Limpiar el temporizador si se hace clic en el botón de búsqueda
-    const searchValue = document.getElementById('barra-busqueda').value.toLowerCase();
-
-    if (searchValue) {
-        const pokemon = await getPokemonDetails(searchValue);
-        if (pokemon) {
-            showPokemonDetails(pokemon);
+function setupEventListeners() {
+    const botonBusqueda = document.getElementById('boton-busqueda');
+    if (botonBusqueda) {
+        botonBusqueda.addEventListener('click', async () => {
+            clearTimeout(timeout);
+            const searchValue = document.getElementById('barra-busqueda').value.toLowerCase();
+            if (searchValue) {
+                const pokemon = await getPokemonDetails(searchValue);
+                if (pokemon) {
+                    showPokemonDetails(pokemon);
+                } else {
+                    alert('¡Pokémon no encontrado!');
+                }
             } else {
-                alert('¡Pokémon no encontrado!');
+                document.getElementById('detalle').innerHTML = '';
             }
-        } else {
-            // Limpiar los detalles del Pokémon si el campo de búsqueda está vacío
-            document.getElementById('detalle').innerHTML = '';
-        }
-    }, 500); // Espera 500 ms después de que el usuario haya dejado de escribir
-
+        });
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
+    setupEventListeners();
     showPokemonList(0);
 });
 
-document.getElementById('btnNext').addEventListener('click', async () => {
-    avanzarPagina(() => showPokemonList(currentPage * limit));
-    currentPage++;
-});
+const btnNext = document.getElementById('btnNext');
+if (btnNext) {
+    btnNext.addEventListener('click', async () => {
+        avanzarPagina(() => showPokemonList(currentPage * limit));
+        currentPage++;
+    });
+}
 
-document.getElementById('btnPrev').addEventListener('click', async () => {
-    currentPage--;
-    retrocederPagina(() => showPokemonList((currentPage - 1) * limit));
-});
+const btnPrev = document.getElementById('btnPrev');
+if (btnPrev) {
+    btnPrev.addEventListener('click', async () => {
+        currentPage--;
+        retrocederPagina(() => showPokemonList((currentPage - 1) * limit));
+    });
+}
+export { showPokemonList, showPokemonDetails  };

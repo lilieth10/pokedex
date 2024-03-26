@@ -1,4 +1,3 @@
-/* Estilos generales */
 
 body {
     font-family: Arial, sans-serif;
@@ -22,7 +21,7 @@ header {
 
 main {
     padding: 20px 0;
-    padding-bottom: 70px; /* Añadir espacio en la parte inferior para el footer */
+    padding-bottom: 70px; 
 }
 
 footer {
@@ -33,16 +32,31 @@ footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    margin-top: 20px; /* Separación del contenido principal */
+    margin-top: 20px; 
+}
+/* Estilos para el contenedor azul */
+.container {
+    padding: 20px;
+    text-align: center;
+    overflow: hidden; /* Evita que el contenido se salga del contenedor */
 }
 
-
-/* Estilos para la lista de Pokémon */
+/* Estilos para el título Pokémon */
+h1 {
+    font-size: 1.5em; /* Ajusta el tamaño del texto según sea necesario */
+    max-width: 100%; /* Asegura que el título no exceda el ancho del contenedor */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 10px; /* Agrega un padding derecho para separar el texto del borde */
+    box-sizing: border-box; /* Incluye el padding en el ancho total del elemento */
+}
 
 .pokemon-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     grid-gap: 20px;
+    justify-content: center; 
 }
 
 .pokemon-list div {
@@ -57,13 +71,13 @@ footer {
     cursor: pointer;
 }
 
-/* Estilos para los detalles del Pokémon */
+
 
 .pokemon-details {
     margin-top: 20px;
+    margin-bottom: 20px;
 }
 
-/* Estilos para la paginación */
 
 .pagination {
     margin-top: 20px;
@@ -82,4 +96,30 @@ footer {
 
 .pagination button:hover {
     background-color: #2980b9;
+}
+
+/* Media Queries para diseño responsive */
+
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .pokemon-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pokemon-list div {
+        flex: 0 0 calc(33.33% - 20px);
+        margin: 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .pokemon-list div {
+        flex: 0 0 calc(50% - 10px);
+        margin: 5px;
+    }
 }
