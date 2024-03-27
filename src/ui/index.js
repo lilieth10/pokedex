@@ -1,6 +1,7 @@
 // index.js
 import { getPokemonList, getPokemonDetails } from '../services/pokedex.js';
 import { avanzarPagina, retrocederPagina } from '../ui/paginado.js';
+import Pokemon from '../clases/pokemon.js';
 
 let currentPage = 1;
 const limit = 10;
@@ -11,7 +12,8 @@ async function showPokemonList(offset) {
     
     pokemonContainer.innerHTML = '';
 
-    pokemonList.forEach(pokemon => {
+    pokemonList.forEach(pokemonData => {
+        const pokemon = new Pokemon(pokemonData.name)
         const pokemonElement = document.createElement('div');
         pokemonElement.textContent = pokemon.name;
         pokemonElement.addEventListener('click', async () => {
