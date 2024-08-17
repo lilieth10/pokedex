@@ -2,7 +2,7 @@
 import { getPokemonList, getPokemonDetails } from '../services/pokedex.js';
 import { avanzarPagina, retrocederPagina } from '../ui/paginado.js';
 import Pokemon from '../clases/pokemon.js';
-
+// dsafgasdg tatus
 let currentPage = 1;
 const limit = 10;
 
